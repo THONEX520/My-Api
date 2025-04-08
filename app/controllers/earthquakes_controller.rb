@@ -1,10 +1,10 @@
 class EarthquakesController < ApplicationController
-  before_action :set_earthquake, only: %i[ show update destroy ]
+  before_action :set_earthquake, only: %i[show update destroy]
 
   # GET /earthquakes
   def index
-    earthquakes = Earthquake.limit(20)
-    render json: earthquakes
+    @earthquakes = Earthquake.page(params[:page]).per(20)
+    render json: @earthquakes
   end
 
   # GET /earthquakes/1
@@ -34,17 +34,22 @@ class EarthquakesController < ApplicationController
 
   # DELETE /earthquakes/1
   def destroy
-    @earthquake.destroy!
+    if @earthquake.destroy
+      head :no_content
+    else
+      render json: { error: 'Failed to delete earthquake' }, status: :unprocessable_entity
+    end
   end
 
   private
+
     # Use callbacks to share common setup or constraints between actions.
     def set_earthquake
-      @earthquake = Earthquake.find(params.expect(:id))
+      @earthquake = Earthquake.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def earthquake_params
-      params.expect(earthquake: [ :date, :location, :magnitude, :depth ])
+      params.require(:earthquake).permit(:date, :location, :magnitude, :depth)
     end
 end

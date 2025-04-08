@@ -7,10 +7,15 @@ Doorkeeper.configure do
 
   # This block will be called to check whether the resource owner is authenticated or not.
   resource_owner_authenticator do
-    # Replace this with your own authentication logic.
-    # Example implementation:
-    current_user || warden.authenticate!(scope: :user)
-  end  
+    grant_flows %w[password client_credentials]
+
+    # Enable the token endpoint (/oauth/token)
+    access_token_expires_in 2.hours
+    use_refresh_token
+    
+    User.find_by(id: session[:user_id]) || error!('Not authorized', 401)
+  end
+  
 
   # If you didn't skip applications controller from Doorkeeper routes in your application routes.rb
   # file then you need to declare this block in order to restrict access to the web interface for
