@@ -5,17 +5,22 @@ Doorkeeper.configure do
   # Check the list of supported ORMs here: https://github.com/doorkeeper-gem/doorkeeper#orms
   orm :active_record
 
-  # This block will be called to check whether the resource owner is authenticated or not.
   resource_owner_authenticator do
-    grant_flows %w[password client_credentials]
-
-    # Enable the token endpoint (/oauth/token)
-    access_token_expires_in 2.hours
-    use_refresh_token
-    
-    User.find_by(id: session[:user_id]) || error!('Not authorized', 401)
+    # Customize this to your authentication logic
+    # If using Devise or your own authentication system in API mode,
+    # raise an error or return nil if user not authenticated
+    # This block is NOT called in password grant flow (handled in resource_owner_from_credentials)
+    current_user || warden.authenticate!(scope: :user)
   end
-  
+
+  # Only include valid `grant_flows` here
+  grant_flows %i[password authorization_code client_credentials]
+
+  # Uncomment and customize this if you plan to support password grant type
+  resource_owner_from_credentials do |_routes|
+    user = User.find_by(email: params[:username])
+    user if user&.authenticate(params[:password])
+  end
 
   # If you didn't skip applications controller from Doorkeeper routes in your application routes.rb
   # file then you need to declare this block in order to restrict access to the web interface for
