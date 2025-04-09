@@ -27,6 +27,8 @@ gem 'swagger-blocks'
 gem 'bcrypt', '~> 3.1.7'
 gem 'swagger-blocks'
 gem 'csv', require: 'csv'
+gem 'pg', '~> 1.1'
+
 
 
 # Reduces boot times through caching; required in config/boot.rb
