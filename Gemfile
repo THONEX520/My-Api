@@ -25,8 +25,8 @@ gem 'kaminari'
 gem 'redis'
 gem 'swagger-blocks'
 gem 'bcrypt', '~> 3.1.7'
-gem 'redis'
 gem 'swagger-blocks'
+gem 'csv', require: 'csv'
 
 
 # Reduces boot times through caching; required in config/boot.rb
