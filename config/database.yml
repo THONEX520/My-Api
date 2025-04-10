@@ -1,21 +1,56 @@
+# SQLite. Versions 3.8.0 and up are supported.
+#   gem install sqlite3
+#
+#   Ensure the SQLite 3 gem is defined in your Gemfile
+#   gem "sqlite3"
+#
+default: &default
+  adapter: sqlite3
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+
+development:
+  <<: *default
+  database: db/development.sqlite3
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rails test".
+# Do not set this db to be the same as development or production.
+test:
+  <<: *default
+  database: db/test.sqlite3
+
+# Store production database in Render's PostgreSQL service
 production:
-  primary:
-    database: <your_primary_database>
-    username: <your_db_username>
-    password: <%= ENV['DATABASE_PASSWORD'] %>
-    host: <%= ENV['DATABASE_HOST'] %>
-    port: <%= ENV['DATABASE_PORT'] %>
+  adapter: postgresql
+  encoding: unicode
+  database: <%= ENV['DATABASE_NAME'] || 'my_api_db' %>
+  username: <%= ENV['DATABASE_USERNAME'] || 'my_api_db_user' %>
+  password: <%= ENV['DATABASE_PASSWORD'] || 'OG3tI0n4O3bTXvy26GJFYIkPDwK2TRQM' %>
+  host: <%= ENV['DATABASE_HOST'] || 'dpg-cvdda9pu0jms739mi00g-a.oregon-postgres.render.com' %>
+  port: 5432
+  pool: 5
+  timeout: 5000
+  url: <%= ENV["DATABASE_URL"] %>
 
-  queue:
-    database: <your_queue_database>
-    username: <%= ENV['DATABASE_USERNAME'] %>
-    password: <%= ENV['DATABASE_PASSWORD'] %>
-    host: <%= ENV['DATABASE_HOST'] %>
-    port: <%= ENV['DATABASE_PORT'] %>
+cable:
+  adapter: postgresql
+  database: <%= ENV['CABLE_DATABASE_NAME'] || 'my_api_cable_production' %>
+  username: <%= ENV['CABLE_DB_USERNAME'] || ENV['DATABASE_USERNAME'] %>
+  password: <%= ENV['CABLE_DB_PASSWORD'] || ENV['DATABASE_PASSWORD'] %>
+  host: <%= ENV['CABLE_DB_HOST'] || ENV['DATABASE_HOST'] %>
 
-  cache:
-    database: <your_cache_database>
-    username: <%= ENV['CACHE_USERNAME'] %>
-    password: <%= ENV['CACHE_PASSWORD'] %>
-    host: <%= ENV['CACHE_HOST'] %>
-    port: <%= ENV['CACHE_PORT'] %>
+queue:
+  adapter: postgresql
+  database: <%= ENV['QUEUE_DATABASE_NAME'] || 'my_api_queue' %>
+  username: <%= ENV['QUEUE_DB_USERNAME'] || ENV['DATABASE_USERNAME'] %>
+  password: <%= ENV['QUEUE_DB_PASSWORD'] || ENV['DATABASE_PASSWORD'] %>
+  host: <%= ENV['QUEUE_DB_HOST'] || ENV['DATABASE_HOST'] %>
+
+cache:
+  adapter: postgresql
+  database: <%= ENV['CACHE_DATABASE_NAME'] || 'my_api_cache' %>
+  username: <%= ENV['CACHE_DB_USERNAME'] || ENV['DATABASE_USERNAME'] %>
+  password: <%= ENV['CACHE_DB_PASSWORD'] || ENV['DATABASE_PASSWORD'] %>
+  host: <%= ENV['CACHE_DB_HOST'] || ENV['DATABASE_HOST'] %>
+  pool: 5
