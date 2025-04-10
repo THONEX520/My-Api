@@ -1,21 +1,12 @@
-default: &default
-  adapter: sqlite3
-  pool: 5
-  timeout: 5000
-  database: db/development.sqlite3
-
-development:
-  <<: *default
-
-test:
-  <<: *default
-  database: db/test.sqlite3
-
 production:
-  <<: *default
-  adapter: postgresql
-  encoding: unicode
-  pool: 5
-  database: my_api_production
-  username: <%= ENV['PG_USERNAME'] %>
-  password: <%= ENV['PG_PASSWORD'] %>
+  primary:
+    adapter: postgresql
+    encoding: unicode
+    pool: 5
+    url: <%= ENV["DATABASE_URL"] %>
+
+  queue:
+    adapter: postgresql
+    encoding: unicode
+    pool: 5
+    url: <%= ENV["DATABASE_URL"] %>
